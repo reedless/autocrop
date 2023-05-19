@@ -1,5 +1,4 @@
 from flask import Flask, request, jsonify
-import io
 import base64
 import os
 import cv2
