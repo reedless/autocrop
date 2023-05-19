@@ -7,17 +7,19 @@ import requests
 
 def post_image(url, image_path):
     files = {'image': open(image_path, 'rb')}
-
+    params = {'prompt': 'cat'}
+    
     # Send POST request
-    response = requests.post(url, files=files)
+    response = requests.post(url, files=files, data=params)
 
     return response
 
 # URL to post the image
 url = "http://127.0.0.1:5000/autocrop"
+# url = "https://autocrop-production.up.railway.app/autocrop"
 
 # Path to the image file
-image_path = "./test.jpg"
+image_path = "./test_cat.jpg"
 
 # Call the function to post the image
 response = post_image(url, image_path)
