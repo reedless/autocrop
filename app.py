@@ -12,6 +12,13 @@ from utils.general import (check_img_size, letterbox, non_max_suppression,
 
 app = Flask(__name__)
 
+# Load model
+device = torch.device('cpu')
+weights = './yolov7.pt'
+print("Loading model...")
+model = attempt_load(weights, map_location=device)  # load FP32 model
+print("Model loaded")
+
 @app.route("/")
 def home():
     return "autocrop v0.1"
@@ -28,17 +35,10 @@ def autocrop():
         return "No image file provided"
     image_file = request.files['image']
 
-    device = torch.device('cpu')
-    weights = './yolov7.pt'
-
-    # Load model
-    print("Loading model...")
-    model = attempt_load(weights, map_location=device)  # load FP32 model
-    print("Model loaded")
+    # get some variables
     stride = int(model.stride.max())  # model stride
     names = model.module.names if hasattr(model, 'module') else model.names
-
-    imgsz = check_img_size(640, s=stride)  # check img_size # TODO: default is 640 and no changes made
+    imgsz = check_img_size(640, s=stride)  # check img_size
 
     # Read the image as numpy array
     image_data = np.frombuffer(image_file.read(), np.uint8)
