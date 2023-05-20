@@ -1,6 +1,5 @@
 import base64
 import os
-from pathlib import Path
 
 import cv2
 import numpy as np
@@ -33,12 +32,13 @@ def autocrop():
     weights = './yolov7.pt'
 
     # Load model
+    print("Loading model...")
     model = attempt_load(weights, map_location=device)  # load FP32 model
+    print("Model loaded")
     stride = int(model.stride.max())  # model stride
     names = model.module.names if hasattr(model, 'module') else model.names
 
     imgsz = check_img_size(640, s=stride)  # check img_size # TODO: default is 640 and no changes made
-
 
     # Read the image as numpy array
     image_data = np.frombuffer(image_file.read(), np.uint8)
@@ -59,10 +59,12 @@ def autocrop():
         img = img.unsqueeze(0)
 
     # Inference
+    print("Starting prediction...")
     with torch.no_grad():   # Calculating gradients would cause a GPU memory leak
         pred = model(img, augment=False)[0]
 
     # Apply NMS
+    print("Applying NMS...")
     conf_thres = 0.25
     iou_thres = 0.45
     pred = non_max_suppression(pred, conf_thres, iou_thres, classes=None, agnostic=False)
