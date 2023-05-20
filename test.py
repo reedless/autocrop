@@ -4,26 +4,20 @@ import cv2
 import numpy as np
 import requests
 
-prompt = 'cat'
-
-def post_image(url, image_path):
-    files = {'image': open(image_path, 'rb')}
-    params = {'prompt': prompt}
-
-    # Send POST request
-    response = requests.post(url, files=files, data=params)
-
-    return response
-
 # URL to post the image
 # url = "http://127.0.0.1:5000/autocrop"
 url = "https://autocrop-production.up.railway.app/autocrop"
 
+# Prompt
+prompt = 'cat'
+
 # Path to the image file
 image_path = f"./test_{prompt}.jpg"
 
-# Call the function to post the image
-response = post_image(url, image_path)
+# Send POST request
+files = {'image': open(image_path, 'rb')}
+params = {'prompt': prompt}
+response = requests.post(url, files=files, data=params)
 
 if response.status_code == 200:
     # Get the returned image
