@@ -17,16 +17,6 @@ app = Flask(__name__)
 def home():
     return "autocrop v0.1"
 
-device = torch.device('cpu')
-save_dir = Path('./autocropped', exist_ok=True)
-weights = './yolov7.pt'
-    
-# Load model
-model = attempt_load(weights, map_location=device)  # load FP32 model
-stride = int(model.stride.max())  # model stride
-names = model.module.names if hasattr(model, 'module') else model.names
-
-imgsz = check_img_size(640, s=stride)  # check img_size # TODO: default is 640 and no changes made
 
 @app.route("/autocrop", methods=["POST"])
 def autocrop():
@@ -38,6 +28,17 @@ def autocrop():
     if 'image' not in request.files:
         return "No image file provided"
     image_file = request.files['image']
+
+    device = torch.device('cpu')
+    weights = './yolov7.pt'
+
+    # Load model
+    model = attempt_load(weights, map_location=device)  # load FP32 model
+    stride = int(model.stride.max())  # model stride
+    names = model.module.names if hasattr(model, 'module') else model.names
+
+    imgsz = check_img_size(640, s=stride)  # check img_size # TODO: default is 640 and no changes made
+
 
     # Read the image as numpy array
     image_data = np.frombuffer(image_file.read(), np.uint8)
