@@ -1,7 +1,6 @@
 import torch
 import torch.nn as nn
 
-
 def autopad(k, p=None):  # kernel, padding
     # Pad to 'same'
     if p is None:

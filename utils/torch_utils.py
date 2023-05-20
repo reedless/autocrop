@@ -7,10 +7,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-try:
-    import thop  # for FLOPS computation
-except ImportError:
-    thop = None
+thop = None
 logger = logging.getLogger(__name__)
 
 
