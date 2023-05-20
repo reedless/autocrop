@@ -21,7 +21,70 @@ print("Model loaded")
 
 @app.route("/")
 def home():
-    return "autocrop v0.1"
+    return """
+    <html>
+        <head>
+            <title>autocrop v0.1</title>
+            <style>
+                pre {
+                background-color: #f4f4f4;
+                padding: 10px;
+                border-radius: 5px;
+                font-family: 'Courier New', Courier, monospace;
+                }
+            </style>
+        </head>
+        <body>
+            <h1>autocrop v0.1 by reedless</h1>
+
+            <p>
+                A simple auto cropping app that takes in an image and a prompt 
+                (currently only supports COCO classes), and returns a cropped image 
+                512x512 with the subject in the centre. Created by https://github.com/reedless.
+            </p>
+
+            <h2>Code Example</h2>
+            <pre>
+                <code>
+                    import base64
+
+                    import cv2
+                    import numpy as np
+                    import requests
+
+                    # URL to post the image
+                    url = "https://autocrop-production.up.railway.app/autocrop"
+
+                    # Prompt
+                    prompt = 'cat'
+
+                    # Path to the image file
+                    image_path = f"./test_{prompt}.jpg"
+
+                    # Send POST request
+                    files = {'image': open(image_path, 'rb')}
+                    params = {'prompt': prompt}
+                    response = requests.post(url, files=files, data=params)
+
+                    if response.status_code == 200:
+                        # Get the returned image and decode from base64
+                        cropped_image_data = response.json()['cropped_image_data']
+                        jpg_original = base64.b64decode(cropped_image_data)
+                        jpg_as_np = np.frombuffer(jpg_original, dtype=np.uint8)
+                        img = cv2.imdecode(jpg_as_np, flags=1)
+
+                        # Save the image using cv2
+                        save_path = "./received_from_post.jpg"
+                        cv2.imwrite(save_path, img)
+                        print(f" The image with the result is saved in: {save_path}")
+                    else:
+                        print(response.status_code)
+                        print(response.text)
+                </code>
+            </pre>
+        </body>
+    </html>
+    """
 
 
 @app.route("/autocrop", methods=["POST"])
