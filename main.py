@@ -133,7 +133,6 @@ def autocrop():
 
     except Exception as e:
         print(e)
-        # Return an error message if there's any exception
         response = {"error": str(e)}
         return jsonify(response), 400
 
